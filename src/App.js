@@ -1,30 +1,44 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import EmployeeForm from './components/EmployeeForm';
+import EmployeeList from './components/EmployeeList';
+import EmployeeDetail from './components/EmployeeDetail';
 
 function App() {
-
-    // Load employees from localStorage or initialize with an empty array
     const [employees, setEmployees] = useState(() => {
         const savedEmployees = localStorage.getItem("employees");
         return savedEmployees ? JSON.parse(savedEmployees) : [];
     });
 
-    // Function to add a new employee
     function addEmployee(newEmployee) {
-        const updatedEmployees = [...employees, newEmployee];
-        setEmployees(updatedEmployees);
-        saveData(updatedEmployees);
-    }
+        const employeeWithId = {
+            ...newEmployee,
+            EmployeeId: employees.length + 1
+        };
 
-    // Function to save employees to localStorage
-    function saveData(data) {
-        localStorage.setItem("employees", JSON.stringify(data));
+        const updatedEmployees = [...employees, employeeWithId];
+        setEmployees(updatedEmployees);
+        localStorage.setItem("employees", JSON.stringify(updatedEmployees));
     }
 
     return (
-        <div>
-            <EmployeeForm onAddEmployee={addEmployee} />
-        </div>
+        <Router>
+            <Routes>
+                <Route
+                    path="/"
+                    element={
+                        <div>
+                            <EmployeeForm onAddEmployee={addEmployee} />
+                            <EmployeeList employees={employees} />
+                        </div>
+                    }
+                />
+                <Route
+                    path="/employees/:id"
+                    element={<EmployeeDetail employees={employees} />}
+                />
+            </Routes>
+        </Router>
     );
 }
 
