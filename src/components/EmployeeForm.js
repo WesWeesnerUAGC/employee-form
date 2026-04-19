@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from "react-redux";
+import { addEmployee } from "../redux/actions";
 import './EmployeeForm.css';
 
 class EmployeeForm extends React.Component {
@@ -24,9 +26,7 @@ class EmployeeForm extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
 
-        this.props.onAddEmployee(this.state); // Pass the employee data to the parent component
-
-        console.log(this.state);
+         this.props.addEmployee(this.state); // Dispatch the action to add the employee
 
         this.setState({
             name: '',
@@ -39,9 +39,19 @@ class EmployeeForm extends React.Component {
     render() {
         return (
             <div className="employee-form">
-                <h2>Employee Form</h2>
+                <div style={{ textAlign: "center" }}>
+                    <div className="form-header">
+                        <h2>Employee Form</h2>
+                        <span className="info-icon">
+                            i
+                            <span className="tooltip-text">
+                                Enter employee details and click "Add Employee" to save them to the system.
+                            </span>
+                        </span>
+                    </div>
+                </div>
 
-                <form className="employee-form" onSubmit={this.handleSubmit}>
+                <form className="employee-form-fields" onSubmit={this.handleSubmit}>
                     <input
                         type="text"
                         name="name"
@@ -74,11 +84,15 @@ class EmployeeForm extends React.Component {
                         onChange={this.handleChange}
                     />
 
-                    <button type="submit">Submit</button>
+                    <button type="submit">Add Employee</button>
                 </form>
             </div>
         );
     }
 }
 
-export default EmployeeForm;
+const mapDispatchToProps = {
+  addEmployee,
+};
+
+export default connect(null, mapDispatchToProps)(EmployeeForm);

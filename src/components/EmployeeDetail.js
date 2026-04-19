@@ -1,21 +1,36 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { connect } from "react-redux";
+import { useParams, Link } from "react-router-dom";
 import './EmployeeForm.css';
 
 function EmployeeDetail(props) {
   // grab the id from the URL
   const { id } = useParams();
   
-  // find that employee by id
-  const employee = props.employees.find((employee) => employee.EmployeeId === parseInt(id));
-  const { EmployeeId, name, email, phone } = employee || {}; // Provide fallback object if employee is undefined
+  // find the employee in the store with that id
+  const employee = props.employees.find(
+    (employee) => employee.EmployeeId === parseInt(id)
+  );
 
+  if (!employee) {
+    return (
+      <div className="employee-detail card">
+        <h1>Employee Details</h1>
+        <p>Employee not found. Please select a valid employee from the list.</p>
+        <Link to="/">Back to Home</Link>
+      </div>
+    );
+  }
   // render an HTML with that employees information
   return (
     <div className="employee-detail">
         <h1>Employee Details</h1>
         <table>
             <tbody>
+                <tr>
+                    <th>ID</th>
+                    <td>{employee.EmployeeId}</td>
+                </tr>
                 <tr>
                     <th>Name</th>
                     <td>{employee.name}</td>
@@ -34,8 +49,18 @@ function EmployeeDetail(props) {
                 </tr>
             </tbody>
         </table>
+
+        <div className="back-link">
+        <Link to="/">Back to Home</Link>
+      </div>
     </div>
   );
 }
 
-export default EmployeeDetail;
+function mapStateToProps(state) {
+  return {
+    employees: state.employees,
+  };
+}
+
+export default connect(mapStateToProps)(EmployeeDetail);
